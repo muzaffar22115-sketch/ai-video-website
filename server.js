@@ -1,11 +1,11 @@
 app.use(express.json());
 
-app.post("/generate-video",(req,res)=>{
+app.post("/generate-video", (req, res) => {
 
-let prompt=req.body.prompt;
+  const prompt = req.body.prompt;
 
-res.json({
-message:"AI video request received: "+prompt
-});
+  res.json({
+    message: "Your AI video request received: " + prompt
+  });
 
 });
