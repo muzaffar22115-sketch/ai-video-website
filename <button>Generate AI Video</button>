@@ -1,0 +1,29 @@
+<button onclick="generateVideo()">Generate AI Video</button>
+
+<p id="result"></p>
+
+<script>
+async function generateVideo(){
+
+let prompt = document.querySelector("input").value;
+
+document.getElementById("result").innerHTML =
+"Video creating... Please wait";
+
+let response = await fetch("/generate-video", {
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+prompt:prompt
+})
+});
+
+let data = await response.json();
+
+document.getElementById("result").innerHTML =
+data.message;
+
+}
+</script>
