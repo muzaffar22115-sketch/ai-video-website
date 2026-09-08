@@ -1,16 +1,11 @@
-const express = require("express");
-const path = require("path");
+app.use(express.json());
 
-const app = express();
+app.post("/generate-video",(req,res)=>{
 
-app.use(express.static(__dirname));
+let prompt=req.body.prompt;
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+res.json({
+message:"AI video request received: "+prompt
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
 });
