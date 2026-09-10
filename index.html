@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Video Hub</title>
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#111;
+color:white;
+padding:40px;
+}
+.box{
+background:#222;
+padding:30px;
+border-radius:20px;
+max-width:500px;
+margin:auto;
+}
+input{
+width:90%;
+padding:12px;
+border-radius:10px;
+margin:20px;
+}
+button{
+background:red;
+color:white;
+padding:15px 25px;
+border:0;
+border-radius:10px;
+font-size:18px;
+}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h1>🎬 AI Video Hub</h1>
+<p>Create AI Videos Easily</p>
+
+<input id="prompt" placeholder="Write your video idea">
+
+<br>
+
+<button onclick="generateVideo()">Generate AI Video</button>
+
+<p id="result"></p>
+</div>
+
+<script>
+async function generateVideo(){
+let prompt=document.getElementById("prompt").value;
+
+document.getElementById("result").innerHTML=
+"Video request: "+prompt;
+}
+</script>
+
+</body>
+</html>
