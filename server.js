@@ -6,13 +6,17 @@ const { Client } = require("magic-hour");
 const app = express();
 
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(__dirname));
+
+const client = new Client({
+  token: process.env.MAGIC_HOUR_API_KEY
+});
+
+const jobs = new Map();
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
-
-const jobs = new Map();
 
 app.post("/generate-video", async (req, res) => {
   try {
@@ -26,119 +30,87 @@ app.post("/generate-video", async (req, res) => {
 
     if (!process.env.MAGIC_HOUR_API_KEY) {
       return res.status(500).json({
-        error: "MAGIC_HOUR_API_KEY is not set in Render."
+        error: "MAGIC_HOUR_API_KEY is missing in Render."
       });
     }
 
-    const client = new Client({
-      token: process.env.MAGIC_HOUR_API_KEY
-    });
+    console.log("Generating image...");
+
+    const imageResult = await client.v1.aiImageGenerator.generate(
+      {
+        imageCount: 1,
+        aspectRatio: "16:9",
+        style: {
+          prompt: prompt
+        },
+        name: "AI Video Image"
+      },
+      {
+        waitForCompletion: true,
+        downloadOutputs: true,
+        downloadDirectory: "/tmp"
+      }
+    );
+
+    const imagePath =
+      imageResult.downloadedPaths?.[0] ||
+      imageResult.downloaded_paths?.[0];
+
+    if (!imagePath) {
+      throw new Error("AI image was created but its file was not found.");
+    }
+
+    console.log("Image created:", imagePath);
+    console.log("Generating video...");
+
+    const videoResult = await client.v1.imageToVideo.generate(
+      {
+        assets: {
+          imageFilePath: imagePath
+        },
+        endSeconds: 5,
+        resolution: "480p",
+        name: "AI Generated Video"
+      },
+      {
+        waitForCompletion: true,
+        downloadOutputs: true,
+        downloadDirectory: "/tmp"
+      }
+    );
+
+    const videoPath =
+      videoResult.downloadedPaths?.[0] ||
+      videoResult.downloaded_paths?.[0];
+
+    if (!videoPath) {
+      throw new Error("Video was created but its file was not found.");
+    }
 
     const jobId = Date.now().toString();
+    const finalPath = path.join("/tmp", `video-${jobId}.mp4`);
+
+    fs.copyFileSync(videoPath, finalPath);
 
     jobs.set(jobId, {
-      status: "processing"
+      filePath: finalPath
     });
+
+    console.log("Video ready:", finalPath);
 
     res.json({
-      jobId,
-      status: "processing"
+      status: "completed",
+      jobId: jobId,
+      videoUrl: `/generated/${jobId}`
     });
-
-    try {
-      const imageResult =
-        await client.v1.ai_image_generator.generate({
-          image_count: 1,
-          style: {
-            prompt: prompt,
-            tool: "ai-image-generator"
-          },
-          aspect_ratio: "16:9",
-          name: "AI Video Image",
-          wait_for_completion: true,
-          download_outputs: true,
-          download_directory: "/tmp"
-        });
-
-      const imagePath = imageResult.downloaded_paths?.[0];
-
-      if (!imagePath) {
-        throw new Error("AI image was not created.");
-      }
-
-      const videoResult =
-        await client.v1.image_to_video.generate({
-          assets: {
-            image_file_path: imagePath
-          },
-          style: {
-            prompt: "Smooth natural cinematic movement based on the scene."
-          },
-          end_seconds: 3,
-          resolution: "480p",
-          name: "AI Generated Video",
-          wait_for_completion: true,
-          download_outputs: true,
-          download_directory: "/tmp"
-        });
-
-      const videoPath = videoResult.downloaded_paths?.[0];
-
-      if (!videoPath) {
-        throw new Error("AI video was not created.");
-      }
-
-      jobs.set(jobId, {
-        status: "completed",
-        filePath: videoPath
-      });
-
-      console.log("Video completed:", videoPath);
-
-    } catch (error) {
-      console.error("Magic Hour error:", error);
-
-      jobs.set(jobId, {
-        status: "failed",
-        error: error.message
-      });
-    }
 
   } catch (error) {
-    console.error(error);
+    console.error("VIDEO ERROR:", error);
 
     res.status(500).json({
-      error: "Server error: " + error.message
+      error: error.message || "Video generation failed."
     });
   }
-});
-
-app.get("/video-status/:jobId", (req, res) => {
-  const job = jobs.get(req.params.jobId);
-
-  if (!job) {
-    return res.status(404).json({
-      error: "Job not found."
-    });
-  }
-
-  if (job.status === "processing") {
-    return res.json({
-      status: "processing"
-    });
-  }
-
-  if (job.status === "failed") {
-    return res.status(500).json({
-      status: "failed",
-      error: job.error
-    });
-  }
-
-  return res.json({
-    status: "completed",
-    videoUrl: `/generated/${req.params.jobId}`
-  });
 });
 
 app.get("/generated/:jobId", (req, res) => {
