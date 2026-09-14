@@ -1,139 +1,725 @@
-<!DOCTYPE html>
-<html>
+        <!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>AI Video Hub</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      background: #111;
-      color: white;
-      padding: 40px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .box {
-      background: #222;
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 500px;
-      margin: auto;
-    }
+<title>AI Video Hub</title>
 
-    input {
-      width: 90%;
-      padding: 12px;
-      border-radius: 10px;
-      margin: 20px;
-      box-sizing: border-box;
-    }
+<style>
 
-    button {
-      background: red;
-      color: white;
-      padding: 15px 25px;
-      border: 0;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    #result {
-      margin-top: 20px;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  color:white;
+  background:
+    radial-gradient(circle at 20% 10%,#162c63 0%,transparent 35%),
+    radial-gradient(circle at 80% 20%,#40145c 0%,transparent 35%),
+    #050816;
+}
 
-    video {
-      width: 100%;
-      margin-top: 20px;
-      border-radius: 12px;
-    }
-  </style>
+/* HEADER */
+
+.header{
+  padding:22px 20px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(5,8,22,.8);
+}
+
+.header-inner{
+  max-width:1050px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* CSS LOGO */
+
+.logo{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  padding:3px;
+  background:linear-gradient(135deg,#00d9ff,#8b5cff,#ff00c8);
+  box-shadow:0 0 25px rgba(0,180,255,.5);
+}
+
+.logo-inner{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#071020;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:27px;
+}
+
+.brand h1{
+  margin:0;
+  font-size:23px;
+}
+
+.brand p{
+  margin:5px 0 0;
+  color:#8995b5;
+  font-size:13px;
+}
+
+/* MAIN */
+
+.main{
+  max-width:1050px;
+  margin:auto;
+  padding:45px 20px 60px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.hero h2{
+  font-size:42px;
+  margin:0;
+  line-height:1.1;
+}
+
+.gradient{
+  background:linear-gradient(90deg,#00c6ff,#8b5cff,#ff20c8);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  color:#9ca8c8;
+  font-size:17px;
+}
+
+/* GENERATOR CARD */
+
+.card{
+  background:rgba(12,19,40,.9);
+  border:1px solid rgba(100,150,255,.2);
+  border-radius:25px;
+  padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.label{
+  display:block;
+  margin-bottom:10px;
+  font-weight:bold;
+  font-size:16px;
+}
+
+textarea{
+  width:100%;
+  min-height:125px;
+  resize:vertical;
+  padding:17px;
+  border-radius:15px;
+  border:1px solid #33456f;
+  outline:none;
+  background:#070d1e;
+  color:white;
+  font-size:16px;
+}
+
+textarea:focus{
+  border-color:#398dff;
+  box-shadow:0 0 20px rgba(30,130,255,.15);
+}
+
+.counter{
+  text-align:right;
+  color:#657292;
+  font-size:12px;
+  margin-top:6px;
+}
+
+/* FORMAT */
+
+.format-title{
+  margin-top:25px;
+  margin-bottom:12px;
+  font-weight:bold;
+}
+
+.formats{
+  display:flex;
+  gap:12px;
+}
+
+.format{
+  flex:1;
+  padding:17px;
+  border-radius:15px;
+  border:1px solid #34466e;
+  background:#0a1125;
+  color:white;
+  cursor:pointer;
+  text-align:left;
+}
+
+.format.active{
+  border:2px solid #249cff;
+  background:linear-gradient(
+    135deg,
+    rgba(0,130,255,.2),
+    rgba(130,50,255,.15)
+  );
+  box-shadow:0 0 20px rgba(0,150,255,.18);
+}
+
+.format strong{
+  display:block;
+  font-size:17px;
+}
+
+.format span{
+  color:#8995b5;
+  font-size:12px;
+}
+
+/* GENERATE BUTTON */
+
+.generate{
+  width:100%;
+  margin-top:22px;
+  padding:18px;
+  border:0;
+  border-radius:15px;
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+  background:linear-gradient(
+    90deg,
+    #ff009d,
+    #814cff,
+    #168cff
+  );
+  box-shadow:0 8px 30px rgba(100,50,255,.25);
+}
+
+.generate:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* LOADING */
+
+.loading{
+  display:none;
+  margin-top:25px;
+  padding:35px 20px;
+  text-align:center;
+  border-radius:20px;
+  background:#070d1e;
+  border:1px solid rgba(80,130,255,.25);
+}
+
+.spinner{
+  width:80px;
+  height:80px;
+  margin:0 auto 20px;
+  border-radius:50%;
+  border:5px solid rgba(255,255,255,.1);
+  border-top:5px solid #00c8ff;
+  border-right:5px solid #a34cff;
+  animation:spin 1s linear infinite;
+  box-shadow:
+    0 0 20px rgba(0,200,255,.35);
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.loading h3{
+  margin:5px 0;
+}
+
+.loading p{
+  color:#8e9abb;
+  margin:8px 0;
+}
+
+/* RESULT */
+
+.result{
+  margin-top:25px;
+}
+
+.video-box{
+  background:#050812;
+  padding:15px;
+  border-radius:20px;
+  border:1px solid rgba(100,150,255,.2);
+}
+
+video{
+  width:100%;
+  max-height:600px;
+  border-radius:15px;
+  background:black;
+}
+
+.ready{
+  color:#32e69b;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.download{
+  display:block;
+  text-align:center;
+  margin-top:15px;
+  padding:15px;
+  border-radius:13px;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
+  background:linear-gradient(
+    90deg,
+    #ff009d,
+    #6c4cff,
+    #148dff
+  );
+}
+
+/* FEATURES */
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-top:25px;
+}
+
+.feature{
+  text-align:center;
+  padding:20px 10px;
+  border-radius:18px;
+  background:rgba(12,19,40,.7);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.feature-icon{
+  font-size:25px;
+}
+
+.feature strong{
+  display:block;
+  margin-top:8px;
+}
+
+.feature small{
+  color:#7784a5;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  .main{
+    padding:30px 14px 50px;
+  }
+
+  .hero h2{
+    font-size:32px;
+  }
+
+  .formats{
+    flex-direction:column;
+  }
+
+  .features{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .card{
+    padding:20px;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="box">
+<header class="header">
 
-  <h1>🎬 AI Video Hub</h1>
-  <p>Create AI Videos Easily</p>
+  <div class="header-inner">
 
-  <input id="prompt" placeholder="Write your video idea">
+    <div class="logo">
+      <div class="logo-inner">🎬</div>
+    </div>
 
-  <br>
+    <div class="brand">
+      <h1>AI Video Hub</h1>
+      <p>Create AI Videos Easily</p>
+    </div>
 
-  <button onclick="generateVideo()">
-    Generate AI Video
-  </button>
+  </div>
 
-  <p id="result"></p>
+</header>
 
-  <div id="videoContainer"></div>
 
-</div>
+<main class="main">
+
+  <section class="hero">
+
+    <h2>
+      Turn Your Ideas Into
+      <br>
+      <span class="gradient">Amazing AI Videos</span>
+    </h2>
+
+    <p>
+      Write your idea, choose a format and create your video.
+    </p>
+
+  </section>
+
+
+  <section class="card">
+
+    <label class="label">
+      ✨ Your Video Idea
+    </label>
+
+    <textarea
+      id="prompt"
+      maxlength="200"
+      placeholder="Example: A cute cat walking in a beautiful garden..."
+      oninput="updateCounter()"
+    ></textarea>
+
+    <div class="counter">
+      <span id="counter">0</span>/200
+    </div>
+
+
+    <div class="format-title">
+      📐 Video Format
+    </div>
+
+
+    <div class="formats">
+
+      <button
+        id="shorts"
+        class="format active"
+        onclick="selectRatio('9:16')"
+      >
+
+        <strong>📱 9:16 Shorts</strong>
+
+        <span>
+          YouTube Shorts / Reels
+        </span>
+
+      </button>
+
+
+      <button
+        id="landscape"
+        class="format"
+        onclick="selectRatio('16:9')"
+      >
+
+        <strong>🖥️ 16:9 Landscape</strong>
+
+        <span>
+          YouTube / Normal Video
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <button
+      id="generate"
+      class="generate"
+      onclick="generateVideo()"
+    >
+      ✨ Generate AI Video →
+    </button>
+
+
+    <!-- LOADING CIRCLE -->
+
+    <div
+      id="loading"
+      class="loading"
+    >
+
+      <div class="spinner"></div>
+
+      <h3>Creating Your Video...</h3>
+
+      <p>
+        AI is working on your video.
+      </p>
+
+      <p>
+        Please wait...
+      </p>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div
+      id="result"
+      class="result"
+    ></div>
+
+  </section>
+
+
+  <section class="features">
+
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <strong>Fast & Easy</strong>
+      <small>Create with one click</small>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <strong>AI Powered</strong>
+      <small>Creative video generation</small>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">📱</div>
+      <strong>9:16 Shorts</strong>
+      <small>Perfect for Shorts</small>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">✨</div>
+      <strong>Creator Ready</strong>
+      <small>Made for creators</small>
+    </div>
+
+  </section>
+
+</main>
+
 
 <script>
 
-async function generateVideo() {
+let selectedRatio = "9:16";
 
-  const prompt = document.getElementById("prompt").value.trim();
-  const result = document.getElementById("result");
-  const videoContainer = document.getElementById("videoContainer");
 
-  if (!prompt) {
-    result.innerText = "Please enter a video idea.";
-    return;
+function updateCounter(){
+
+  const text =
+    document.getElementById("prompt").value;
+
+  document.getElementById("counter")
+    .innerText = text.length;
+
+}
+
+
+function selectRatio(ratio){
+
+  selectedRatio = ratio;
+
+  const shorts =
+    document.getElementById("shorts");
+
+  const landscape =
+    document.getElementById("landscape");
+
+
+  shorts.classList.remove("active");
+  landscape.classList.remove("active");
+
+
+  if(ratio === "9:16"){
+
+    shorts.classList.add("active");
+
+  }else{
+
+    landscape.classList.add("active");
+
   }
 
-  result.innerText = "⏳ Creating your AI video...";
-  videoContainer.innerHTML = "";
+}
 
-  try {
 
-    const response = await fetch("/generate-video", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prompt: prompt
-      })
-    });
+async function generateVideo(){
 
-    const text = await response.text();
+  const prompt =
+    document.getElementById("prompt")
+      .value
+      .trim();
+
+  const generate =
+    document.getElementById("generate");
+
+  const loading =
+    document.getElementById("loading");
+
+  const result =
+    document.getElementById("result");
+
+
+  if(!prompt){
+
+    result.innerHTML =
+      '<p style="color:#ff6b6b;">❌ Please enter a video idea.</p>';
+
+    return;
+
+  }
+
+
+  generate.disabled = true;
+
+  generate.innerText =
+    "⏳ Creating Video...";
+
+
+  result.innerHTML = "";
+
+  loading.style.display = "block";
+
+
+  try{
+
+    const response =
+      await fetch(
+        "/generate-video",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+
+            prompt:prompt,
+
+            aspectRatio:selectedRatio
+
+          })
+
+        }
+      );
+
+
+    const text =
+      await response.text();
+
 
     let data;
 
-    try {
+
+    try{
+
       data = JSON.parse(text);
-    } catch {
+
+    }catch{
+
       throw new Error(
-        "Server returned an unexpected response. Please check Render Logs."
+        "Server returned an unexpected response."
       );
+
     }
 
-    if (!response.ok) {
-      throw new Error(data.error || "Video generation failed.");
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Video generation failed."
+      );
+
     }
 
-    if (data.status === "completed" && data.videoUrl) {
 
-      result.innerText = "✅ Video ready!";
+    if(
+      data.status === "completed" &&
+      data.videoUrl
+    ){
 
-      videoContainer.innerHTML =
-        '<video controls src="' + data.videoUrl + '"></video>' +
-        '<br><br>' +
-        '<a href="' + data.videoUrl +
-        '" download style="color:white;">Download Video</a>';
+      loading.style.display = "none";
 
-      return;
+
+      result.innerHTML = `
+
+        <div class="video-box">
+
+          <div class="ready">
+            ✅ Video Ready!
+          </div>
+
+          <video
+            controls
+            playsinline
+            src="${data.videoUrl}"
+          ></video>
+
+          <a
+            class="download"
+            href="${data.videoUrl}"
+            download
+          >
+            ⬇️ Download Video
+          </a>
+
+        </div>
+
+      `;
+
+    }else{
+
+      throw new Error(
+        "Video URL was not returned."
+      );
+
     }
 
-    throw new Error("Video URL was not returned.");
 
-  } catch (error) {
+  }catch(error){
 
-    result.innerText = "❌ " + error.message;
+    loading.style.display = "none";
+
+    result.innerHTML =
+
+      '<p style="color:#ff6b6b;">❌ ' +
+      error.message +
+      '</p>';
 
   }
+
+
+  generate.disabled = false;
+
+  generate.innerText =
+    "✨ Generate AI Video →";
+
 }
 
 </script>
